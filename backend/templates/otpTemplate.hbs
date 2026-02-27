@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your OTP Code</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: linear-gradient(135deg, #f0f4ff, #e0f7fa);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 90%;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(60deg, #6a11cb, #2575fc, #6a11cb);
+      animation: rotate 6s linear infinite;
+      opacity: 0.05;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+
+    h2 {
+      color: #333333;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #555555;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 15px 0;
+    }
+
+    .otp-box {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      margin: 25px 0;
+      padding: 20px 0;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #ff758c, #ff7eb3);
+      color: #fff;
+      box-shadow: 0 5px 15px rgba(255, 120, 140, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .otp-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(255, 120, 140, 0.6);
+    }
+
+    .footer {
+      font-size: 12px;
+      color: #999999;
+      margin-top: 25px;
+    }
+
+    /* Neumorphic Button Style (optional if you want a button) */
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      margin-top: 20px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(90deg, #6a11cb, #2575fc);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(42, 71, 236, 0.4);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(42, 71, 236, 0.6);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Hello {{name}},</h2>
+    <p>
+      You recently requested to reset your password. Use the OTP below to complete your request.
+    </p>
+
+    <div class="otp-box">
+      {{otp}}
+    </div>
+
+    <p>
+      This OTP is valid for <strong>{{expiry}}</strong>. Please do not share this code with anyone.
+    </p>
+    <p>
+      If you did't request this, you can safely ignore this email.
+    </p>
+
+    <!-- Optional button -->
+    <!-- <a href="#" class="btn">Verify Now</a> -->
+
+    <div class="footer">
+      &copy; {{year}} Dating App. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
