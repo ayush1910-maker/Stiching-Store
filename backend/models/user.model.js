@@ -18,8 +18,6 @@ const userSchema = new Schema(
     phone: {
       type: String,
       trim: true,
-      default: "",
-      unique: true,
       sparse: true
     },
     password: {
