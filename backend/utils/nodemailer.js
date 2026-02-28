@@ -1,29 +1,44 @@
 import nodemailer from "nodemailer";
+import handlebars from "handlebars";
+import fs from "fs";
+import path from "path";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: Number(process.env.SMTP_PORT || 587),
-  secure: String(process.env.SMTP_SECURE || "false") === "true",
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
-export const sendEmail = async ({ to, subject, text, html }) => {
-  if (!to || !subject || (!text && !html)) {
-    throw new Error("to, subject and text/html are required for sendEmail");
-  }
+export const sendEmail = async (to, subject, templateName, templateData) => {
+  try {
+    const templatePath = path.join(
+      path.resolve(),
+      "src",
+      "templates",
+      `${templateName}.hbs`
+    );
 
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    throw new Error("SMTP_USER and SMTP_PASS are required in environment variables");
-  }
+    const templateSource = fs.readFileSync(templatePath, "utf8");
+    const template = handlebars.compile(templateSource);
+    const html = template(templateData);
 
-  return transporter.sendMail({
-    from: process.env.MAIL_FROM || process.env.SMTP_USER,
-    to,
-    subject,
-    text,
-    html
-  });
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to,
+      subject,
+      html,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: %s", info.messageId);
+    return { status: true };
+  } catch (err) {
+    console.error("Error sending email:", err);
+    return { status: false, error: err.message };
+  }
 };
