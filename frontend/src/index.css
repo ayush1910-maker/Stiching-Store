@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+@theme {
+  /* 1. Emerald Brand Colors (Premium Indian Tailoring Vibe) */
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981; 
+  --color-brand-600: #059669; /* Primary Button Color */
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
+  --color-brand-950: #022c22;
+
+  /* 2. Neutral Dark Colors for Text & Dashboards */
+  --color-dark-50: #f6f6f6;
+  --color-dark-100: #e7e7e7;
+  --color-dark-200: #d1d1d1;
+  --color-dark-300: #b0b0b0;
+  --color-dark-400: #888888;
+  --color-dark-500: #6d6d6d;
+  --color-dark-600: #5d5d5d;
+  --color-dark-700: #4f4f4f;
+  --color-dark-800: #454545;
+  --color-dark-900: #3d3d3d;
+  --color-dark-950: #1a1a1a;
+
+  /* 3. Typography */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+
+  /* 4. Map Dynamic Root Variables to Tailwind Utility Classes */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius: var(--radius);
+}
+
+@layer base {
+  :root {
+    --background: #f8fafc; /* Very light slate to make white cards pop */
+    --foreground: var(--color-dark-950);
+    --card: #ffffff;
+    --card-foreground: var(--color-dark-950);
+    --popover: #ffffff;
+    --popover-foreground: var(--color-dark-950);
+    
+    --primary: var(--color-brand-600);
+    --primary-foreground: #ffffff;
+    
+    --secondary: var(--color-brand-50);
+    --secondary-foreground: var(--color-brand-900);
+    
+    --muted: var(--color-dark-100);
+    --muted-foreground: var(--color-dark-500);
+    
+    --accent: var(--color-brand-100);
+    --accent-foreground: var(--color-brand-900);
+    
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    
+    --border: var(--color-dark-200);
+    --input: var(--color-dark-200);
+    --ring: var(--color-brand-500);
+    
+    --radius: 1rem; /* Bubbly, native-app corner radius */
+  }
+
+  .dark {
+    --background: var(--color-dark-950);
+    --foreground: var(--color-dark-50);
+    --card: var(--color-dark-900);
+    --card-foreground: var(--color-dark-50);
+    --popover: var(--color-dark-900);
+    --popover-foreground: var(--color-dark-50);
+    
+    --primary: var(--color-brand-500);
+    --primary-foreground: #ffffff;
+    
+    --secondary: var(--color-dark-800);
+    --secondary-foreground: var(--color-dark-50);
+    
+    --muted: var(--color-dark-800);
+    --muted-foreground: var(--color-dark-400);
+    
+    --accent: var(--color-brand-900);
+    --accent-foreground: var(--color-brand-50);
+    
+    --destructive: #7f1d1d;
+    --destructive-foreground: #ffffff;
+    
+    --border: var(--color-dark-800);
+    --input: var(--color-dark-800);
+    --ring: var(--color-brand-500);
+  }
+}
+
+@layer base {
+  /* Vite v4 Compiler Fixes - NO @apply here */
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    letter-spacing: -0.015em;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Utilities for glassmorphism */
+  .glass {
+    @apply bg-white/70 dark:bg-black/50 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-sm;
+  }
+
+  .glass-card {
+    @apply bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-xl;
+  }
+
+  /* Hide scrollbar for clean UI mobile apps feel */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
