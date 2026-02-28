@@ -13,10 +13,12 @@ const userSchema = new Schema(
       type: String,
       required: true,
       lowercase: true,
-      trim: true
+      trim: true,
+      unique: true // 🔥 add this
     },
     phone: {
       type: String,
+      default: "",
       trim: true,
       sparse: true
     },
@@ -53,23 +55,34 @@ const userSchema = new Schema(
       default: null
     }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
+// ✅ SAFE password hashing
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  try {
+    if (!this.isModified("password")) return next();
 
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+
+    next();
+  } catch (error) {
+    next(error); // 🔥 important
+  }
 });
 
+// ✅ Password compare
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return bcrypt.compare(password, this.password);
+  return await bcrypt.compare(password, this.password);
 };
 
+// ✅ Access Token
 userSchema.methods.generateAccessToken = function () {
+  if (!process.env.ACCESS_TOKEN_SECRET) {
+    throw new Error("ACCESS_TOKEN_SECRET not defined");
+  }
+
   return jwt.sign(
     {
       _id: this._id,
@@ -84,11 +97,14 @@ userSchema.methods.generateAccessToken = function () {
   );
 };
 
+// ✅ Refresh Token
 userSchema.methods.generateRefreshToken = function () {
+  if (!process.env.REFRESH_TOKEN_SECRET) {
+    throw new Error("REFRESH_TOKEN_SECRET not defined");
+  }
+
   return jwt.sign(
-    {
-      _id: this._id
-    },
+    { _id: this._id },
     process.env.REFRESH_TOKEN_SECRET,
     {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d"
