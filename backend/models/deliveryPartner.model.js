@@ -22,6 +22,17 @@ const bankDetailsSchema = new Schema(
   { _id: false }
 );
 
+const earningsSchema = new Schema(
+  {
+    total: { type: Number, min: 0, default: 0 },
+    paid: { type: Number, min: 0, default: 0 },
+    pending: { type: Number, min: 0, default: 0 },
+    status: { type: String, enum: ["PENDING", "PAID"], default: "PENDING" },
+    lastPayoutAt: { type: Date, default: null }
+  },
+  { _id: false }
+);
+
 const geoPointSchema = new Schema(
   {
     type: {
@@ -57,13 +68,17 @@ const deliveryPartnerSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
-      index: true
+      unique: true
     },
     vehicleType: {
       type: String,
       enum: ["BIKE", "SCOOTER", "BICYCLE", "CAR"],
       required: true
+    },
+    vehicleNumber: {
+      type: String,
+      trim: true,
+      default: ""
     },
     documents: { type: deliveryDocumentSchema, default: () => ({}) },
     isOnline: { type: Boolean, default: false },
@@ -71,15 +86,14 @@ const deliveryPartnerSchema = new Schema(
     totalDeliveries: { type: Number, min: 0, default: 0 },
     rating: { type: Number, min: 0, max: 5, default: 0 },
     bankDetails: { type: bankDetailsSchema, default: () => ({}) },
-    isDeleted: { type: Boolean, default: false, index: true },
+    earnings: { type: earningsSchema, default: () => ({}) },
+    isDeleted: { type: Boolean, default: false },
     assignedTasks: { type: [assignedTaskSchema], default: [] }
   },
   { timestamps: true }
 );
 
 deliveryPartnerSchema.index({ currentLocation: "2dsphere" });
+deliveryPartnerSchema.index({ isDeleted: 1, isOnline: 1, updatedAt: -1 });
 
-export const DeliveryPartner = mongoose.model(
-  "DeliveryPartner",
-  deliveryPartnerSchema
-);
+export const DeliveryPartner = mongoose.model("DeliveryPartner", deliveryPartnerSchema);

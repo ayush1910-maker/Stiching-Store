@@ -6,10 +6,9 @@ const customerProfileSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
-      index: true
+      unique: true
     },
-    savedAddresses: [{ type: Schema.Types.ObjectId, ref: "Address" }],
+    savedAddresses: { type: [{ type: Schema.Types.ObjectId, ref: "Address" }], default: [] },
     savedMeasurements: { type: [Schema.Types.Mixed], default: [] },
     totalOrders: { type: Number, min: 0, default: 0 },
     loyaltyPoints: { type: Number, min: 0, default: 0 }
@@ -17,7 +16,4 @@ const customerProfileSchema = new Schema(
   { timestamps: true }
 );
 
-export const CustomerProfile = mongoose.model(
-  "CustomerProfile",
-  customerProfileSchema
-);
+export const CustomerProfile = mongoose.model("CustomerProfile", customerProfileSchema);

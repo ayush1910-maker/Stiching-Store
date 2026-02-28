@@ -7,56 +7,64 @@ const userSchema = new Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
+      minlength: 2,
+      maxlength: 120
     },
     email: {
       type: String,
       required: true,
+      unique: true,
       lowercase: true,
-      trim: true,
+      trim: true
     },
     phone: {
       type: String,
       trim: true,
-      sparse: true
+      unique: true,
+      sparse: true,
+      default: undefined
     },
     password: {
       type: String,
-      required: true
+      required: true,
+      minlength: 6,
+      select: false
     },
     role: {
       type: String,
       enum: ["admin", "customer", "tailor", "delivery"],
-      default: "customer",
-      index: true
+      default: "customer"
     },
     isActive: {
       type: Boolean,
-      default: true,
-      index: true
+      default: true
     },
     isBanned: {
       type: Boolean,
-      default: false,
-      index: true
+      default: false
     },
     otp: {
       type: String,
-      default: null
+      default: null,
+      select: false
     },
     otp_expired: {
       type: Date,
-      default: null
+      default: null,
+      select: false
     },
     refreshToken: {
       type: String,
-      default: null
+      default: null,
+      select: false
     }
   },
   { timestamps: true }
 );
 
-// ✅ SAFE password hashing
+userSchema.index({ role: 1, isActive: 1, isBanned: 1 });
+
 userSchema.pre("save", async function (next) {
   try {
     if (!this.isModified("password")) return next();
@@ -64,18 +72,16 @@ userSchema.pre("save", async function (next) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 
-    next();
+    return next();
   } catch (error) {
-    next(error); // 🔥 important
+    return next(error);
   }
 });
 
-// ✅ Password compare
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  return bcrypt.compare(password, this.password);
 };
 
-// ✅ Access Token
 userSchema.methods.generateAccessToken = function () {
   if (!process.env.ACCESS_TOKEN_SECRET) {
     throw new Error("ACCESS_TOKEN_SECRET not defined");
@@ -95,7 +101,6 @@ userSchema.methods.generateAccessToken = function () {
   );
 };
 
-// ✅ Refresh Token
 userSchema.methods.generateRefreshToken = function () {
   if (!process.env.REFRESH_TOKEN_SECRET) {
     throw new Error("REFRESH_TOKEN_SECRET not defined");

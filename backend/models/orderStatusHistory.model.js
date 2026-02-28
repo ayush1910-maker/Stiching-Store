@@ -2,10 +2,18 @@ import mongoose, { Schema } from "mongoose";
 
 const historyStatusEnum = [
   "pending",
+  "assigned",
+  "accepted",
+  "cutting",
+  "stitching",
+  "finishing",
+  "ready",
+  "ready_for_delivery",
+  "delivered",
+  "rejected",
+  "cancelled",
   "in_progress",
   "completed",
-  "delivered",
-  "cancelled",
   "alteration_requested",
   "PLACED",
   "PAYMENT_PENDING",
@@ -30,8 +38,7 @@ const orderStatusHistorySchema = new Schema(
     orderId: {
       type: Schema.Types.ObjectId,
       ref: "StitchingOrder",
-      required: true,
-      index: true
+      required: true
     },
     status: {
       type: String,
@@ -53,7 +60,6 @@ const orderStatusHistorySchema = new Schema(
   { timestamps: false }
 );
 
-export const OrderStatusHistory = mongoose.model(
-  "OrderStatusHistory",
-  orderStatusHistorySchema
-);
+orderStatusHistorySchema.index({ orderId: 1, timestamp: 1 });
+
+export const OrderStatusHistory = mongoose.model("OrderStatusHistory", orderStatusHistorySchema);

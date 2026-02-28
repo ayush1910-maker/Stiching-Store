@@ -54,8 +54,7 @@ const ecommerceOrderSchema = new Schema(
     customerId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
-      index: true
+      required: true
     },
     products: {
       type: [orderProductSchema],
@@ -76,6 +75,11 @@ const ecommerceOrderSchema = new Schema(
       enum: ["PENDING", "PAID", "FAILED", "REFUNDED"],
       default: "PENDING"
     },
+    orderStatus: {
+      type: String,
+      enum: ecommerceOrderStatus,
+      default: "PLACED"
+    },
     shippingAddress: {
       type: shippingAddressSchema,
       required: true
@@ -84,8 +88,7 @@ const ecommerceOrderSchema = new Schema(
     status: {
       type: String,
       enum: ecommerceOrderStatus,
-      default: "PLACED",
-      index: true
+      default: "PLACED"
     },
     returnStatus: {
       type: String,
@@ -96,5 +99,9 @@ const ecommerceOrderSchema = new Schema(
   },
   { timestamps: true }
 );
+
+ecommerceOrderSchema.index({ customerId: 1, createdAt: -1 });
+ecommerceOrderSchema.index({ status: 1, createdAt: -1 });
+ecommerceOrderSchema.index({ paymentStatus: 1, createdAt: -1 });
 
 export const EcommerceOrder = mongoose.model("EcommerceOrder", ecommerceOrderSchema);

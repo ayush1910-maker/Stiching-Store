@@ -5,13 +5,14 @@ const measurementSchema = new Schema(
     customerId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
-      index: true
+      required: true
     },
     profileName: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
+      minlength: 2,
+      maxlength: 120
     },
     data: {
       type: Schema.Types.Mixed,
@@ -25,5 +26,7 @@ const measurementSchema = new Schema(
   },
   { timestamps: true }
 );
+
+measurementSchema.index({ customerId: 1, createdAt: -1 });
 
 export const Measurement = mongoose.model("Measurement", measurementSchema);

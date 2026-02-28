@@ -5,8 +5,7 @@ const servicePricingSchema = new Schema(
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "ServiceCategory",
-      required: true,
-      index: true
+      required: true
     },
     deliveryType: {
       type: String,

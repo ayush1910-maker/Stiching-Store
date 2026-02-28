@@ -8,8 +8,8 @@ const cartItemSchema = new Schema(
       required: true
     },
     quantity: { type: Number, required: true, min: 1 },
-    size: { type: String, trim: true, default: "" },
-    color: { type: String, trim: true, default: "" },
+    size: { type: String, trim: true, default: "", maxlength: 30 },
+    color: { type: String, trim: true, default: "", maxlength: 30 },
     unitPrice: { type: Number, min: 0, default: 0 }
   },
   { _id: false }
@@ -21,8 +21,7 @@ const cartSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
-      index: true
+      unique: true
     },
     items: { type: [cartItemSchema], default: [] }
   },

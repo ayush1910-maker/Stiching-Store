@@ -2,10 +2,18 @@ import mongoose, { Schema } from "mongoose";
 
 const ORDER_STATUS = [
   "pending",
+  "assigned",
+  "accepted",
+  "cutting",
+  "stitching",
+  "finishing",
+  "ready",
+  "ready_for_delivery",
+  "delivered",
+  "rejected",
+  "cancelled",
   "in_progress",
   "completed",
-  "delivered",
-  "cancelled",
   "alteration_requested",
   "PLACED",
   "PAYMENT_PENDING",
@@ -46,9 +54,9 @@ const commissionSchema = new Schema(
 
 const stitchingOrderSchema = new Schema(
   {
-    orderId: { type: String, required: true, unique: true, index: true, trim: true },
-    customerId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
-    tailorId: { type: Schema.Types.ObjectId, ref: "User", default: null, index: true },
+    orderId: { type: String, required: true, unique: true, trim: true },
+    customerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    tailorId: { type: Schema.Types.ObjectId, ref: "User", default: null },
     deliveryPartnerPickupId: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -71,7 +79,8 @@ const stitchingOrderSchema = new Schema(
     },
     measurements: { type: Schema.Types.Mixed, default: {} },
     designImages: { type: [String], default: [] },
-    specialInstructions: { type: String, trim: true, default: "" },
+    completionPhotos: { type: [String], default: [] },
+    specialInstructions: { type: String, trim: true, default: "", maxlength: 2000 },
     fabricSource: {
       type: String,
       enum: ["CUSTOMER", "PLATFORM"],
@@ -90,9 +99,20 @@ const stitchingOrderSchema = new Schema(
     status: {
       type: String,
       enum: ORDER_STATUS,
-      default: "pending",
-      index: true
+      default: "pending"
     },
+    paymentStatus: {
+      type: String,
+      enum: ["PENDING", "PAID", "FAILED", "REFUNDED"],
+      default: "PENDING"
+    },
+    orderStatus: {
+      type: String,
+      enum: ORDER_STATUS,
+      default: "PAYMENT_PENDING"
+    },
+    rejectionReason: { type: String, trim: true, default: "" },
+    price: { type: Number, min: 0, default: 0 },
     pricing: { type: pricingSchema, default: () => ({}) },
     commission: { type: commissionSchema, default: () => ({}) },
     totalAmount: { type: Number, required: true, min: 0 },
@@ -103,6 +123,12 @@ const stitchingOrderSchema = new Schema(
   },
   { timestamps: true }
 );
+
+stitchingOrderSchema.index({ customerId: 1, createdAt: -1 });
+stitchingOrderSchema.index({ tailorId: 1, status: 1, createdAt: -1 });
+stitchingOrderSchema.index({ deliveryPartnerPickupId: 1, status: 1 });
+stitchingOrderSchema.index({ deliveryPartnerDropId: 1, status: 1 });
+stitchingOrderSchema.index({ paymentStatus: 1, createdAt: -1 });
 
 export const StitchingOrder = mongoose.model("StitchingOrder", stitchingOrderSchema);
 export { ORDER_STATUS };
